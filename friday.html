@@ -161,6 +161,51 @@
 
     .error-msg.visible { display: block; }
 
+    /* SHARE ROW */
+    .share-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 520px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .share-row:focus-within { border-color: var(--accent); }
+    .share-url {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: ui-monospace, "SF Mono", monospace;
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: text;
+      user-select: all;
+    }
+    .copy-btn {
+      flex-shrink: 0;
+      padding: 0.7rem 1rem;
+      background: transparent;
+      border: none;
+      border-left: 1px solid var(--border);
+      color: var(--accent-light);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .copy-btn:hover { background: rgba(124, 106, 247, 0.1); }
+    .copy-btn.copied { color: #4ade80; }
+    .share-row.hidden { display: none; }
+
     /* GIPHY ATTRIBUTION */
     .giphy-attr {
       font-size: 0.7rem;
@@ -183,6 +228,11 @@
       <div class="spinner"></div>
       <span>Loading your Friday vibe&hellip;</span>
     </div>
+  </div>
+
+  <div class="share-row hidden" id="shareRow">
+    <input class="share-url" id="shareUrl" type="text" readonly />
+    <button class="copy-btn" id="copyBtn" onclick="copyUrl()">Copy link</button>
   </div>
 
   <div class="controls">
@@ -216,12 +266,27 @@
     const placeholder = document.getElementById('placeholder');
     const btn = document.getElementById('nextBtn');
     const errorMsg = document.getElementById('errorMsg');
+    const shareRow = document.getElementById('shareRow');
+    const shareUrl = document.getElementById('shareUrl');
+    const copyBtn = document.getElementById('copyBtn');
 
-    let lastUrl = null;
+    let lastGifId = null;
+
+    function copyUrl() {
+      navigator.clipboard.writeText(shareUrl.value).then(() => {
+        copyBtn.textContent = '✓ Copied!';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy link';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      });
+    }
 
     async function loadGif() {
       btn.disabled = true;
       errorMsg.classList.remove('visible');
+      shareRow.classList.add('hidden');
       img.classList.add('loading');
       placeholder.classList.remove('hidden');
 
@@ -236,17 +301,18 @@
 
         if (!data.data || data.data.length === 0) throw new Error('No results');
 
-        const gifUrl = data.data[0].images.original.url;
+        let gif = data.data[0];
+        if (gif.id === lastGifId && data.data.length > 1) gif = data.data[1];
+        lastGifId = gif.id;
 
-        // Avoid repeating the same GIF twice in a row
-        if (gifUrl === lastUrl && data.data.length > 1) {
-          gifUrl = data.data[1]?.images?.original?.url ?? gifUrl;
-        }
-        lastUrl = gifUrl;
+        const gifUrl = gif.images.original.url;
+        const pageUrl = `https://giphy.com/gifs/${gif.id}`;
 
         img.onload = () => {
           img.classList.remove('loading');
           placeholder.classList.add('hidden');
+          shareUrl.value = pageUrl;
+          shareRow.classList.remove('hidden');
           btn.disabled = false;
         };
         img.src = gifUrl;
