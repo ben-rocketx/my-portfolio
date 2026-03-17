@@ -115,6 +115,28 @@
 
     .placeholder.hidden { display: none; }
 
+    /* THEME INPUT */
+    .theme-row {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 520px;
+      gap: 0.6rem;
+    }
+    .theme-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .theme-input:focus { border-color: var(--accent); }
+    .theme-input::placeholder { color: var(--muted); }
+
     /* CONTROLS */
     .controls {
       display: flex;
@@ -230,6 +252,10 @@
     </div>
   </div>
 
+  <div class="theme-row">
+    <input class="theme-input" id="themeInput" type="text" placeholder="Friday" value="Friday" />
+  </div>
+
   <div class="share-row hidden" id="shareRow">
     <input class="share-url" id="shareUrl" type="text" readonly />
     <button class="copy-btn" id="copyBtn" onclick="copyUrl()">Copy link</button>
@@ -269,6 +295,9 @@
     const shareRow = document.getElementById('shareRow');
     const shareUrl = document.getElementById('shareUrl');
     const copyBtn = document.getElementById('copyBtn');
+    const themeInput = document.getElementById('themeInput');
+
+    themeInput.addEventListener('keydown', e => { if (e.key === 'Enter') loadGif(); });
 
     let lastGifId = null;
 
@@ -290,7 +319,7 @@
       img.classList.add('loading');
       placeholder.classList.remove('hidden');
 
-      const term = SEARCH_TERMS[Math.floor(Math.random() * SEARCH_TERMS.length)];
+      const term = themeInput.value.trim() || 'Friday';
       const offset = Math.floor(Math.random() * 50);
       const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(term)}&limit=1&offset=${offset}&rating=g`;
 
