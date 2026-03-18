@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ben Munro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --text: #1a1a1a;
+      --muted: #666;
+      --border: #e0ddd8;
+    }
+
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+    }
+
+    .logo {
+      font-family: 'Caveat', cursive;
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 1.5px;
+      background: var(--text);
+    }
+
+    /* MENU OVERLAY */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4rem;
+    }
+
+    .menu-close {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text);
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .menu-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .menu-links a {
+      font-family: 'Caveat', cursive;
+      font-size: 2.4rem;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .menu-links a:hover { opacity: 0.5; }
+
+    /* TAGLINE */
+    .tagline {
+      padding: 2.5rem 2rem 3rem;
+    }
+
+    .tagline p {
+      font-family: 'Caveat', cursive;
+      font-size: 1.25rem;
+      color: var(--text);
+      line-height: 1.9;
+      font-weight: 400;
+      max-width: 400px;
+    }
+
+    .tagline .dash {
+      display: inline-block;
+      width: 2.5rem;
+      height: 1px;
+      background: var(--text);
+      vertical-align: middle;
+      margin: 0 0.4rem;
+    }
+
+    /* GALLERY GRID */
+    .gallery {
+      padding: 0 2rem 4rem;
+      columns: 2;
+      column-gap: 0.75rem;
+    }
+
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      background: var(--border);
+    }
+
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: opacity 0.3s;
+    }
+
+    .gallery-item:hover img { opacity: 0.88; }
+
+    .gallery-placeholder {
+      break-inside: avoid;
+      margin-bottom: 0.75rem;
+      background: #ede9e3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+    }
+
+    .gallery-placeholder span {
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* ABOUT SECTION */
+    #about {
+      padding: 4rem 2rem 3rem;
+      max-width: 640px;
+    }
+
+    #about h2 {
+      font-family: 'Caveat', cursive;
+      font-size: 1.6rem;
+      font-weight: 500;
+      margin-bottom: 1.2rem;
+    }
+
+    #about p {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    /* CONTACT SECTION */
+    #contact {
+      padding: 2rem 2rem 5rem;
+    }
+
+    #contact h2 {
+      font-family: 'Caveat', cursive;
+      font-size: 1.6rem;
+      font-weight: 500;
+      margin-bottom: 1.2rem;
+    }
+
+    .contact-line {
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: var(--muted);
+      line-height: 2;
+    }
+
+    .contact-line a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 1px;
+      transition: opacity 0.2s;
+    }
+
+    .contact-line a:hover { opacity: 0.55; }
+
+    /* FOOTER */
+    footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Caveat', cursive;
+      font-size: 1rem;
+      color: var(--muted);
+    }
+
+    /* DESKTOP */
+    @media (min-width: 700px) {
+      nav { padding: 2rem 3.5rem; }
+      .logo { font-size: 2.2rem; }
+      .tagline { padding: 3rem 3.5rem 4rem; }
+      .tagline p { font-size: 1.35rem; }
+      .gallery { padding: 0 3.5rem 5rem; column-gap: 1rem; }
+      .gallery-item { margin-bottom: 1rem; }
+      .gallery-placeholder { margin-bottom: 1rem; }
+      #about { padding: 5rem 3.5rem 3rem; max-width: 700px; }
+      #about p { font-size: 1.15rem; }
+      #contact { padding: 2rem 3.5rem 6rem; }
+      footer { padding: 2rem 3.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="logo">Ben Munro</a>
+    <button class="hamburger" onclick="openMenu()" aria-label="Open menu">
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menu">
+    <div class="menu-header">
+      <span class="logo">Ben Munro</span>
+      <button class="menu-close" onclick="closeMenu()" aria-label="Close menu">&times;</button>
+    </div>
+    <ul class="menu-links">
+      <li><a href="#work" onclick="closeMenu()">work</a></li>
+      <li><a href="#about" onclick="closeMenu()">about</a></li>
+      <li><a href="#contact" onclick="closeMenu()">contact</a></li>
+    </ul>
+  </div>
+
+  <!-- TAGLINE -->
+  <div class="tagline">
+    <p>
+      software engineer<br>
+      open source, side projects<span class="dash"></span>available for work
+    </p>
+  </div>
+
+  <!-- GALLERY / WORK -->
+  <div class="gallery" id="work">
+
+    <div class="gallery-placeholder" style="aspect-ratio: 4/3;">
+      <span>project image<br>coming soon</span>
+    </div>
+    <div class="gallery-placeholder" style="aspect-ratio: 3/4;">
+      <span>project image<br>coming soon</span>
+    </div>
+
+    <div class="gallery-placeholder" style="aspect-ratio: 3/4;">
+      <span>project image<br>coming soon</span>
+    </div>
+    <div class="gallery-placeholder" style="aspect-ratio: 4/3;">
+      <span>project image<br>coming soon</span>
+    </div>
+
+    <div class="gallery-placeholder" style="aspect-ratio: 1/1;">
+      <span>project image<br>coming soon</span>
+    </div>
+    <div class="gallery-placeholder" style="aspect-ratio: 1/1;">
+      <span>project image<br>coming soon</span>
+    </div>
+
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <h2>about</h2>
+    <p>I build fast, thoughtful software — focused on clean architecture, great developer experience, and products people actually want to use.</p>
+    <p>Currently open to new opportunities. Send me a message.</p>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <h2>contact</h2>
+    <div class="contact-line">
+      <a href="mailto:hello@benmunro.dev">hello@benmunro.dev</a><br>
+      <a href="https://github.com/ben-rocketx" target="_blank" rel="noopener">github</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; 2026 Ben Munro
+  </footer>
+
+  <script>
+    function openMenu() {
+      document.getElementById('menu').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      document.getElementById('menu').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  </script>
+
+</body>
+</html>
